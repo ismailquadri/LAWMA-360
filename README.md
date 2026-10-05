@@ -45,8 +45,15 @@ Use **View as** for a persona-specific entry point, or **Scenario guide** for a 
 
 Journey progress is stored in session storage. **Reset demonstration** clears the sample journey. Fleet follow-up changes are held in memory and reset on reload.
 
+## Appearance and motion
+
+Choose **Light**, **Dark** or **System** in the header. The preference persists locally. Motion respects reduced-motion settings. The embedded map engine initializes on first fleet entry; this defers execution rather than reducing the standalone file size.
+
+[Light preview](outputs/LAWMA_Light_Mode.jpg) · [Dark preview](outputs/LAWMA_Dark_Mode.jpg)
+
 ## Documentation
 
+- [UX research process and case study](docs/CASE-STUDY-LAWMA-360.md)
 - [Project documentation and technical handover](docs/PROJECT_DOCUMENTATION.md)
 - [Persona journeys and requirement coverage](outputs/LAWMA_Prototype_Journeys_and_Coverage.md)
 - [Project understanding and unresolved requirements](outputs/LAWMA_project_understanding_review.md)

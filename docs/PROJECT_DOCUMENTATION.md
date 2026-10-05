@@ -72,6 +72,8 @@ The application is plain HTML, CSS and JavaScript, bundled into one static HTML 
 | `work/dashboard-v3.css` | Fleet layout, controls, map/detail panels and responsive styles |
 | `work/dashboard-v3.js` | Seeded fleet data, search/filter, map layers, detail views, dialogs and export |
 | `work/journeys.js` | Persona navigation, domain workspaces, workflow forms and session state |
+| `work/polish.js` | Motion, dialog background isolation, lazy map initialization and appearance preference |
+| `work/polish.css` | LAWMA-inspired brand tokens, light/dark themes and interaction polish |
 | `work/journeys.css` | Connected workspace styling and accessibility provisions |
 | `work/routes.json` | Cached route geometry used by the application |
 | `work/build_dashboard.py` | Replaces template placeholders and writes the standalone HTML |
@@ -151,3 +153,7 @@ The consolidated assessment and client point-of-view documents were reviewed for
 Start with Management → Scenario guide, then switch personas to demonstrate how the same service record travels across teams. Reset between presentations. Keep the visible simulation indicators intact. Use the research report for the client-facing domain narrative and the coverage document for scope validation.
 
 The GitHub repository is a source/document handover. A public deployment, domain connection or GitHub Pages configuration is a separate action.
+
+## 13. Appearance and motion refinement
+
+Light/dark/system preference is saved under `lawma-appearance` in local storage and applied before rendering. Map styles follow appearance (OpenFreeMap Positron/Dark). The map engine remains embedded but is evaluated and initialized on first fleet entry. Dialog and drawer transitions use the Web Animations API, with immediate state changes for reduced-motion preferences. Offscreen panels use CSS content visibility. These changes are not a measured performance or accessibility certification.
