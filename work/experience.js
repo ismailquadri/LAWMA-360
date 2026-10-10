@@ -41,9 +41,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-serv
 });
 setInterval(()=>{if(!document.hidden)refreshService()},5000);
 // Quiet tactile sound; never autoplay. The persistent toggle is keyboard accessible.
-let soundOn=true,audioContext;try{soundOn=localStorage.getItem('sw-sound')!=='off'}catch{}
-const soundButton=document.createElement('button');soundButton.className='btn sound-toggle';document.querySelector('.account').prepend(soundButton);
-function soundLabel(){soundButton.textContent=soundOn?'Sound on':'Sound off';soundButton.setAttribute('aria-pressed',String(soundOn));soundButton.setAttribute('aria-label','Button sounds '+(soundOn?'on':'off'))}soundLabel();soundButton.onclick=()=>{soundOn=!soundOn;try{localStorage.setItem('sw-sound',soundOn?'on':'off')}catch{}soundLabel()};
+let soundOn=true,audioContext;
 document.addEventListener('click',e=>{if(!soundOn||!e.target.closest('button:not(:disabled),a.product-button'))return;try{audioContext||=new (window.AudioContext||window.webkitAudioContext)();audioContext.resume();const o=audioContext.createOscillator(),g=audioContext.createGain(),t=audioContext.currentTime;o.type='sine';o.frequency.setValueAtTime(720,t);o.frequency.exponentialRampToValueAtTime(430,t+.045);g.gain.setValueAtTime(.028,t);g.gain.exponentialRampToValueAtTime(.0001,t+.065);o.connect(g);g.connect(audioContext.destination);o.start(t);o.stop(t+.07)}catch{}});
 // Road-aligned movement uses kilometres per hour, stops at the destination and honours reduced motion.
 let fleetMotion=!matchMedia('(prefers-reduced-motion: reduce)').matches,followTruck=false,lastFleetTick=performance.now(),lastFleetList=0;

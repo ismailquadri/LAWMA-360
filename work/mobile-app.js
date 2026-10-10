@@ -13,7 +13,6 @@ function mobileTabs(){
  const nav=[[home,'Home','home'],[work,'Work','file'],[permitted('fleet')?'fleet':permitted('cameras')?'cameras':'resident',permitted('fleet')?'Map':permitted('cameras')?'Cameras':'Service','map'],['alerts','Inbox','bell'],['more','More','more']];
  const seen=new Set();
  appTabs.innerHTML=nav.filter(([p])=>{if(seen.has(p)||p!=='more'&&!permitted(p))return false;seen.add(p);return true}).map(([p,label,ic])=>`<button data-module="${p==='more'?'app-menu':'app-go'}" data-record="${p}" ${journey.page===p?'aria-current="page"':''}>${icon(ic)}<span>${label}</span>${p==='alerts'&&visibleNotices().some(n=>!n.read)?'<i class="app-unread" aria-label="Unread notifications"></i>':''}</button>`).join('');
- document.querySelectorAll('.journey-context>span:last-child').forEach(x=>x.textContent='Simulated operations');
 }
 const mobileRender=renderJourney;
 renderJourney=function(){mobileRender();mobileTabs()};

@@ -22,7 +22,7 @@ const simFlag=(title,detail,site)=>{
  simNotice(title,detail,'incidents','Warning');
 };
 const isPartnerRole=()=>['partner','psp','crew'].includes(journey.role);
-const simulatedNote=()=>'<span class="sim-label">SIMULATED OPERATIONS</span>';
+const simulatedNote=()=>'';
 const simBtn=(label,cmd,id='',primary=false)=>button(label,'sim-'+cmd,id,primary);
 const simNext=o=>({Assigned:'Start route',Collecting:'Capture next collection','Evidence queued':'Sync collection evidence',Collected:'Record facility arrival','At facility':'Record weight & unload',Verified:'Create billing records'}[o.stage]||'View record');
 const canOrderAction=o=>isAuthority()||journey.role==='finance'&&o.stage==='Verified'||journey.role==='facility'&&['Collected','At facility'].includes(o.stage)||['partner','psp','crew'].includes(journey.role)&&['Assigned','Collecting','Evidence queued'].includes(o.stage)&&o.partner===modules.partnerContext;
