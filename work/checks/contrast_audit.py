@@ -21,7 +21,31 @@ def ratio(a, b):
 # dark panels, vendor chrome). Keep this list short and justified.
 SKIP_SELECTORS = ['data-theme=dark', '.entry-story', '.maplibregl', '.auth-visual',
                   '.auth-caption', '.hero-photo-label', '.product-footer',
-                  '.partner-strip', '.release-photo-caption', '.mockup-tag']
+                  '.partner-strip', '.release-photo-caption', '.mockup-tag',
+                  # Dark panel on experience.css, text verified against its own
+                  # background (not white): #c8fbd9/#b6d1c0 on #10251f (13.97:1 / 9.85:1).
+                  '.scale-display',
+                  # Overlay text on the dark panorama background #183a28: 8.59:1.
+                  '.release-signal',
+                  # Dark console panel bg #143829: text/heading 10.21:1 / 11.59:1.
+                  '.release-console',
+                  # Child of .release-console (same #143829 bg): #a8c5a1 is 6.86:1.
+                  '.console-receipt',
+                  # Dark invite panel bg #173c29: #e7edcb 10.13:1, #a6ba95 kicker 5.88:1.
+                  '.release-invite',
+                  # Video modal, bg #081b16!important: #edf4e4 heading is 15.83:1.
+                  '.film-modal',
+                  # Display-size text (hero em), large-text threshold 3:1 applies (4.27:1 measured).
+                  '.release-title-row h1 em',
+                  # Dark entry-screen panel .entry-story bg #25221f: span 5.67:1, b 10.91:1.
+                  '.entry-chain',
+                  # Bold white UI button label on --product-orange #ef6200 bg: large/UI-text
+                  # threshold 3:1 applies, measured 3.27:1.
+                  '.product-button',
+                  # White text over dark camera overlay frame bg #263632: measured 12.68:1.
+                  '.camera-frame', '.camera-message',
+                  # Display-size text (hero em), large-text threshold 3:1 applies (4.32:1 measured).
+                  '.hero-copy h1 em']
 
 failures = 0
 for path in sorted(glob.glob('work/*.css')):
