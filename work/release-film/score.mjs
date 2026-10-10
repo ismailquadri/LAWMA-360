@@ -1,0 +1,5 @@
+import fs from 'node:fs';
+const rate=44100,duration=70,n=rate*duration,b=Buffer.alloc(44+n*2);b.write('RIFF',0);b.writeUInt32LE(b.length-8,4);b.write('WAVEfmt ',8);b.writeUInt32LE(16,16);b.writeUInt16LE(1,20);b.writeUInt16LE(1,22);b.writeUInt32LE(rate,24);b.writeUInt32LE(rate*2,28);b.writeUInt16LE(2,32);b.writeUInt16LE(16,34);b.write('data',36);b.writeUInt32LE(n*2,40);
+const chords=[[110,130.81,164.81],[87.31,110,130.81],[130.81,164.81,196],[98,123.47,146.83]];
+for(let i=0;i<n;i++){const t=i/rate,bar=Math.floor(t/8)%4,phase=t%8,fade=Math.min(1,t/3,(70-t)/4),blend=Math.min(1,phase/1.8);let v=0;for(let c=0;c<3;c++){const f=chords[bar][c],old=chords[(bar+3)%4][c];v+=(Math.sin(2*Math.PI*f*t)+.25*Math.sin(4*Math.PI*f*t))*blend/5;v+=(Math.sin(2*Math.PI*old*t)+.25*Math.sin(4*Math.PI*old*t))*(1-blend)/5}const pulse=(t%(60/84));v+=.12*Math.exp(-pulse*18)*Math.sin(2*Math.PI*(70+35*Math.exp(-pulse*25))*t);b.writeInt16LE(Math.round(v*fade*950),44+i*2)}
+fs.writeFileSync('outputs/presentation-assets/release-film/score.wav',b);
