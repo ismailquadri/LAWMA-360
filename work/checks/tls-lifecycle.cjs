@@ -1,0 +1,32 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const harness=fs.readFileSync('work/checks/tls-entry.cjs','utf8').match(/const setup=`([\s\S]*?)`;/)[1];
+const ctx=vm.createContext({console,Date,Intl,assert});
+vm.runInContext(harness+'\nconst personaPages={};\n'+['work/tls.js','work/tls-entry.js','work/tls-lifecycle.js'].map(p=>fs.readFileSync(p,'utf8')).join('\n'),ctx);
+vm.runInContext(`
+modules.partners.push({id:'CARRIER',status:'Active',service:'Transport'});
+function incoming(id){assert.equal(tlsRegister({truck:id,driver:'Driver',partner:'P1',route:'IKJ-01'}),null);const t=tls.trips.at(-1);assert.equal(tlsAdmission(t,{observed:id,method:'Manual',result:'Matched',evidence:'GATE-'+id}),null);return t}
+function weights(t,extra={}){return tlsWeight(t,{gross:18.4,tare:11.2,evidence:'SCALE-'+t.id,source:'Simulated weighbridge',material:'Mixed municipal waste',inspection:'Accepted',findings:'Inspected sample load',...extra})}
+function dispatch(kg,extra={}){return tlsDispatch({truck:'HAUL-'+tls.transfers.length,driver:'Demo haulage driver',partner:'CARRIER',kg,source:'FIFO',ticket:'OUT-'+tls.transfers.length,destination:'FAC-003',material:'Mixed waste',hours:4,departed:'on',...extra})}
+function resolve(e){return tlsReviewException(e,{owner:'Supervisor',severity:'High',status:'Resolved',hours:24,note:'Evidence verified'})}
+const t=incoming('IN01');assert.equal(tlsStartBridge(t),null);assert.match(weights(t,{gross:'Infinity'}),/valid positive/);assert.equal(weights(t),undefined);
+assert.equal(tlsBalance(),42000);assert.equal(tlsBeginUnload(t,{bay:'A'}),undefined);assert.equal(tlsBalance(),42000);
+runModule('tls-pause-unload',t.id);captured({reason:'Spillage cleared before restart'});assert.equal(t.state,'Unload paused');assert.match(tlsCompleteUnload(t,{confirmed:'on'}),/not actively/);
+runModule('tls-resume-unload',t.id);captured({reason:'Supervisor confirmed bay clear'});assert.equal(tlsCompleteUnload(t,{confirmed:'on'}),undefined);assert.equal(tlsBalance(),49200);assert.match(tlsCompleteUnload(t,{confirmed:'on'}),/not actively/);assert.equal(tlsBalance(),49200);
+assert.equal(dispatch(2,{source:t.id}),undefined);const m=tls.transfers[0];assert.equal(m.sources[0].ref,t.id);assert.equal(tlsBalance(),47200);assert.equal(tlsSources().find(l=>l.ref===t.id).kg,5200);
+assert.match(tlsRegister({truck:m.truck,driver:'Driver',partner:'P1',route:'R'}),/active trip/);
+assert.match(tlsReceive(m,{accepted:3,rejected:0,receipt:'BAD'}),/cannot exceed/);
+journey.role='receiving';assert.equal(tlsReceive(m,{accepted:1.5,rejected:.5,receipt:'DEST-01',officer:'Receiving officer',notes:'Partial acceptance'}),undefined);assert.equal(tlsOutstanding(m),500);journey.role='management';
+assert.match(resolve(tlsOpen().find(e=>e.ref===m.id)),/outstanding/);
+assert.equal(tlsRemainder(m,{kind:'Returned to this TLS',kg:.5,destination:'Ikeja bay B',officer:'TLS officer',evidence:'RETURN-01'}),undefined);assert.equal(tlsBalance(),47700);assert.equal(tlsOutstanding(m),0);assert.equal(resolve(tlsOpen().find(e=>e.ref===m.id)),undefined);
+assert.equal(tlsAdjustment({kg:-43,reason:'Stock loss evidenced by measurement'}),undefined);assert.equal(tlsBalance(),4700);assert.equal(tlsSources().reduce((n,l)=>n+l.kg,0),4700);assert.equal(dispatch(4.7),undefined);const m2=tls.transfers.at(-1);assert.equal(tlsSources().length,0);
+assert.match(tlsReceive(m2,{accepted:4.7,rejected:0,receipt:'dest 01'}),/unique/);assert.equal(tlsReceive(m2,{accepted:4.7,rejected:0,receipt:'DEST-02',officer:'Officer',notes:'Accepted all'}),undefined);assert.equal(tlsBalance(),0);
+const rejected=incoming('REJECT');tlsStartBridge(rejected);assert.equal(weights(rejected,{inspection:'Rejected',findings:'Contaminated load'}),undefined);assert.equal(rejected.state,'Rejected');assert.equal(tlsBalance(),0);assert.match(tlsBeginUnload(rejected,{bay:'A'}),/not ready/);assert.equal(tlsDivert(rejected,{destination:'Approved specialist facility',reason:'Contamination',evidence:'DIV-01'}),undefined);assert.equal(tlsTerminal(rejected),true);
+const manual=incoming('MANUAL');tlsConfig(tlsFacility()).bridgeStatus='Unavailable';journey.role='facility';assert.match(weights(manual,{override:'Outage'}),/supervisor/);journey.role='management';assert.equal(weights(manual,{override:'Witnessed manual fallback'}),undefined);assert.equal(manual.manualPending,true);assert.match(tlsBeginUnload(manual,{bay:'B'}),/review/);assert.equal(tlsReconcileWeight(manual,{gross:17.2,tare:11.2,evidence:'VERIFIED-MANUAL',reason:'Verified replacement scale ticket'}),undefined);assert.equal(manual.net,6000);assert.equal(manual.weighRecords.length,2);tlsConfig(tlsFacility()).bridgeStatus='Available';assert.equal(tlsBeginUnload(manual,{bay:'B'}),undefined);assert.equal(tlsCompleteUnload(manual,{confirmed:'on'}),undefined);
+assert.equal(dispatch(6),undefined);const m3=tls.transfers.at(-1);assert.equal(tlsReceive(m3,{accepted:5,rejected:1,receipt:'DEST-03',officer:'Officer',notes:'One tonne diverted'}),undefined);assert.equal(tlsRemainder(m3,{kind:'Confirmed alternative disposal',kg:1,destination:'Specialist disposal',officer:'Receiving officer',evidence:'ALT-01'}),undefined);assert.equal(tlsBalance(),0);assert.equal(resolve(tlsOpen().find(e=>e.ref===m3.id)),undefined);
+runModule('tls-stock','');captured({kg:0,method:'Measured empty holding bay'});assert.equal(tlsCloseDay({confirmed:'on'}),undefined);assert.equal(tls.opening,0);assert.equal(tls.closed.length,1);assert.equal(tlsSources().reduce((n,l)=>n+l.kg,0),0);
+assert.equal(tlsAdjustment({kg:2,reason:'Measured stock receipt correction'}),undefined);assert.equal(tlsSources().reduce((n,l)=>n+l.kg,0),tlsBalance());
+journey.role='auditor';assert.match(tlsAdjustment({kg:1,reason:'Blocked'}),/supervisor/);assert.match(dispatch(1),/operator/);journey.role='management';
+assert.equal(dispatch(1),undefined);const late=tls.transfers.at(-1);late.due=new Date(Date.now()-1000).toISOString();tlsScan();tlsScan();assert.equal(tlsOpen().filter(e=>e.ref===late.id&&e.type==='Overdue receipt').length,1);
+assert.equal(tlsSelect('FAC-002'),true);assert.equal(tlsBalance(),0);assert.equal(tlsSources().length,0);
+console.log('PASS: complete intake, interruptions, rejected diversion, manual outage reconciliation, split source allocation, partial receipt and return, alternative disposal, negative adjustment lots, carry-forward, scope and overdue review deduplication.');
+`,ctx);

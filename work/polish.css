@@ -15,7 +15,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 html[data-theme=dark]{--ink:#f0ece7;--muted:#b7afa5;--line:#3b3732;--paper:#171615;--surface:#22201e;--focus:#ffad66;--lawma-soft:#3d2a1d;--lawma-text:#ffb16d;color-scheme:dark}
 html[data-theme=dark] body{background:var(--paper);color:var(--ink)}
 html[data-theme=dark] :is(.top,.journey-bar,.journey-nav,.work-panel,.fleet-list,.workspace,.detail,.modal,.layers-pop){background:var(--surface);border-color:var(--line);color:var(--ink)}
-html[data-theme=dark] .brand img{background:white;border-radius:4px;padding:3px}
+html[data-theme=dark] .brand img,html[data-theme=dark] .brand .product-home img{background:transparent;border-radius:0;padding:0}
 html[data-theme=dark] :is(.product,.journey-context,.journey-switch,.journey-nav button,.journey-head p,.work-panel header p,.journey-stats span,.journey-stats small,.record-banner small,.plain-list,.context-note,.priority-row small,.journey-footer,.stop-detail p,.resident-date p,.page-head p,.row-sub,.row-bottom,.list-scope,.page-foot,.metric label,.metric small,.kv span,.note,.modal p,.modal label,.guide-list,.list-footer,.detail-content .note,.eyebrow,.user small){color:#bfb6aa}
 html[data-theme=dark] :is(.record-banner,.context-note){background:#2a2520;border-color:#45382a}
 html[data-theme=dark] :is(.journey-stats,.journey-stats>div,.priority-row,th,td,.detail-section,.detail-tabs,.form-footer,.list-footer,.metrics,.search,.select-row select){border-color:var(--line)}
@@ -48,5 +48,5 @@ html[data-theme=dark] .progress{background:#45382b}
 html[data-theme=dark] .maplibregl-ctrl-group{filter:invert(.88) hue-rotate(180deg)}
 html[data-theme=dark] .maplibregl-popup-content{background:#2b2520;color:#f0e6d8}
 html[data-theme=dark] .error-text{color:#ffb5a1}
-@media(max-width:760px){.top .help,.top .avatar{display:none}.top .account{margin-left:auto}.theme-control{padding-inline:5px}.theme-control select{font-size:10px}.top .brand img{width:94px}}
+@media(max-width:760px){.top .help,.top .avatar{display:none}.top .account{margin-left:auto}.theme-control{padding-inline:5px}.theme-control select{font-size:10px}.top .brand img{width:138px;max-height:25px}}
 @media(max-width:620px){#exceptionToggle{font-size:10px;padding:8px;max-width:95px;white-space:normal;line-height:1.3}.page-actions{gap:6px}.page-head{gap:8px}}
