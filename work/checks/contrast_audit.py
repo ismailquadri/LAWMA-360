@@ -39,8 +39,8 @@ SKIP_SELECTORS = ['data-theme=dark', '.entry-story', '.maplibregl', '.auth-visua
                   '.release-title-row h1 em',
                   # Dark entry-screen panel .entry-story bg #25221f: span 5.67:1, b 10.91:1.
                   '.entry-chain',
-                  # Bold white UI button label on --product-orange #ef6200 bg: large/UI-text
-                  # threshold 3:1 applies, measured 3.27:1.
+                  # Known pre-existing AA failure (white 13-14px text on #ef6200, 3.27:1);
+                  # fixing requires a brand-color decision — out of scope for this pass.
                   '.product-button',
                   # White text over dark camera overlay frame bg #263632: measured 12.68:1.
                   '.camera-frame', '.camera-message',
