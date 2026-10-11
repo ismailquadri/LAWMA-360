@@ -45,6 +45,6 @@ function render(t){g.globalAlpha=1;g.fillStyle=C.bg;g.fillRect(0,0,1920,1080);le
  rect(115,970,1690,2,0,'#87A07944');rect(115,970,1690*Math.min(t/70,1),2,0,C.orange);text('SMARTWASTE360  /  A CONNECTED DAY',115,1014,15,C.muted);text('Product presentation · illustrative operations',1350,1014,15,C.muted);
  if(t>68){g.fillStyle=`rgba(7,22,15,${Math.min(1,(t-68)/2)})`;g.fillRect(0,0,1920,1080)}
 }
-const out=spawn('ffmpeg',['-y','-loglevel','error','-f','image2pipe','-framerate','24','-vcodec','mjpeg','-i','pipe:0','-i',root+'/narration.mp3','-c:v','libx264','-preset','fast','-crf','20','-pix_fmt','yuv420p','-af','apad=pad_dur=3','-t','70','-c:a','aac','-b:a','192k','-ar','48000','-movflags','+faststart',root+'/release-film.mp4'],{stdio:['pipe','inherit','inherit']});
-for(let f=0;f<70*24;f++){render(f/24);if([48,500,1040,1440].includes(f))fs.writeFileSync(root+'/frame-'+f+'.png',c.toBuffer('image/png'));if(!out.stdin.write(c.toBuffer('image/jpeg',90)))await once(out.stdin,'drain');if(f%240===0)console.log('Rendered',f/24,'seconds')}
+const out=spawn('ffmpeg',['-y','-loglevel','error','-f','image2pipe','-framerate','24','-vcodec','mjpeg','-i','pipe:0','-i',root+'/narration.mp3','-c:v','libx264','-preset','slow','-crf','19','-pix_fmt','yuv420p','-af','apad=pad_dur=3','-t','70','-c:a','aac','-b:a','192k','-ar','48000','-movflags','+faststart',root+'/release-film.mp4'],{stdio:['pipe','inherit','inherit']});
+for(let f=0;f<70*24;f++){render(f/24);if([48,500,1040,1440].includes(f))fs.writeFileSync(root+'/frame-'+f+'.png',c.toBuffer('image/png'));if(!out.stdin.write(c.toBuffer('image/jpeg',96)))await once(out.stdin,'drain');if(f%240===0)console.log('Rendered',f/24,'seconds')}
 out.stdin.end();await once(out,'close');console.log('Film rendered');
